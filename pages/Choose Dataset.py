@@ -7,9 +7,9 @@ import pandas as pd
 import numpy as np
 from sklearn import datasets
 
-###################################
-## Important Variables Functions ##
-###################################
+#########################
+## Important Variables ##
+#########################
 
 choose_dataset = '''
 Choosing the right dataset is an important step in any data analysis or machine learning project.
@@ -19,6 +19,12 @@ quality of the data, and the relevance of the data to your project. You should a
 has been preprocessed or if it requires additional cleaning and preparation. Ultimately, the best dataset for
 your project is one that aligns with your goals and provides enough information to effectively train your
 models and answer your research questions.'''
+
+own_dataset = '''
+Please ensure that you upload a **cleaned version of your CSV file** as the program will not perform any additional
+manipulations on your data. It is equally important to **upload the feature and target data separately**, so the
+program can determine what you aim to predict and on which data.
+'''
 
 ######################
 ## Helper Functions ##
@@ -69,9 +75,12 @@ if (dataset_choice == 'Work with standard dataset'):
   if (st.button('Dataset Description')):
     st.write(description)
 else:
-  st.header('Upload Own Dataset (Must be a Cleaned CSV)')
+  st.header('Upload Own Dataset')
+  st.write(own_dataset)
   file_X = st.file_uploader('Upload a CSV (Only Features)')
   file_y = st.file_uploader('Upload a CSV (Only Target)')
   X, y = store_own_dataset(file_X), store_own_dataset(file_y)
-  st.write(pd.concat([X, y], axis=1))
+  
+  if (X and y is not None):
+    st.write(pd.concat([X, y], axis=1))
   
