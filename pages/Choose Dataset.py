@@ -20,6 +20,18 @@ has been preprocessed or if it requires additional cleaning and preparation. Ult
 your project is one that aligns with your goals and provides enough information to effectively train your
 models and answer your research questions.'''
 
+standard_dataset = '''
+The standard datasets used in the program are sourced from the scikit-learn (sklearn) library, which is a popular 
+machine learning library in Python. Sklearn provides a variety of datasets, including both real-world and 
+artificial datasets, to help users experiment with and evaluate different machine learning algorithms. The 
+toy datasets in the program are a subset of these datasets and are specifically chosen to be simple and small 
+in size, making them ideal for learning and testing purposes. By using these datasets, users can gain a better 
+understanding of how the algorithms work and how they can be applied to real-world problems.
+
+Want to learn more about the sklearn toy datasets? Visit this 
+<a href='https://scikit-learn.org/stable/datasets/toy_dataset.html'>website</a>.
+'''
+
 own_dataset = '''
 Please ensure that you upload a **cleaned version of your CSV file** as the program will not perform any additional
 manipulations on your data. It is equally important to **upload the feature and target data separately**, so the
@@ -31,6 +43,10 @@ program can determine what you aim to predict and on which data.
 ######################
 
 def store_standard_dataset(dataset_name):
+  '''
+  Loading the `dataset_name` toy dataset from the sklearn library and splitting the data into the features and
+  the target datasets. Returns the features and target datasets with a description of the dataset.
+  '''
   if (dataset_name == 'Iris'):
     dataset = datasets.load_iris()
   elif (dataset_name == 'Diabetes'):
@@ -48,6 +64,9 @@ def store_standard_dataset(dataset_name):
   return X, y, description
 
 def store_own_dataset(csv_file):
+  '''
+  Returning `csv_file` as a dataframe.
+  '''
   if (csv_file is not None):
     dataset = pd.read_csv(csv_file)
   else:
@@ -59,28 +78,45 @@ def store_own_dataset(csv_file):
 #################
 
 st.title('Choose Dataset')
-st.write(choose_dataset)
+st.write(choose_dataset, unsafe_allow_html=True)
 
 # Seeing if user wants to enter own dataset or use one of the standard datasets provided by sklearn
 dataset_choice = st.selectbox('Choose one option', ['Work with standard dataset', 'Upload own dataset'])
 
 # Different actions taken depending on the dataset the user decides to use
 if (dataset_choice == 'Work with standard dataset'):
+  # Header
   st.header('Choose Standard Dataset')
+  st.write(standard_dataset, unsafe_allow_html=True)
+  
+  # Selecting and showing the dataset
   dataset_name = st.selectbox('', ['Iris', 'Diabetes', 'Digits', 'Wine', 'Breast Cancer'])
   X, y, description = store_standard_dataset(dataset_name)
-  st.write(pd.concat([X, y], axis=1))
+  st.dataframe(pd.concat([X, y], axis=1))
   
-  # User decides if they want to see the description of the dataset
-  if (st.button('Dataset Description')):
+  # Toy dataset description for the user
+  with st.expander('Dataset Description'):
     st.write(description)
+    
+  # Submission
+  if (st.button('Submit Dataset')):
+    X.to_csv('data/features.csv')
+    y.to_csv('data/target.csv') 
 else:
+  # Header
   st.header('Upload Own Dataset')
-  st.write(own_dataset)
+  st.write(own_dataset, unsafe_allow_html=True)
+  
+  # Giving options to upload the dataset
   file_X = st.file_uploader('Upload a CSV (Only Features)')
   file_y = st.file_uploader('Upload a CSV (Only Target)')
   X, y = store_own_dataset(file_X), store_own_dataset(file_y)
   
-  if (X and y is not None):
-    st.write(pd.concat([X, y], axis=1))
-  
+  # Showing the dataset if both files uploaded
+  if (file_X and file_y is not None):
+    st.dataframe(pd.concat([X, y], axis=1))
+    
+    # Submission
+    if (st.button('Submit Dataset')):
+      X.to_csv('data/features.csv')
+      y.to_csv('data/target.csv')    

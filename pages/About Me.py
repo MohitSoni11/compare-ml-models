@@ -31,7 +31,7 @@ focus on the development of my machine learning models without getting bogged do
 of the underlying technology. The video demonstrated how Streamlit could be used to quickly create
 interactive data visualizations, dashboard-style reports, and other interactive applications for 
 machine learning. This was exactly what I was looking for to bring my projects to life. I was eager to
-dive in and start using Streamlit for my own projects...'''
+dive in and start using Streamlit for my own projects.'''
 
 contact = '''
 <center style=''>
