@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from sklearn import datasets
+import time
 
 #########################
 ## Important Variables ##
@@ -72,19 +73,28 @@ def store_own_dataset(csv_file):
   else:
     return
   return dataset
+
+def submission(X, y, dataset_name):
+  '''
+  Function that submits a dataset and produces aesthetically pleasing displays. 
+  '''
   
-#################
-## Application ##
-#################
-
-st.title('Choose Dataset')
-st.write(choose_dataset, unsafe_allow_html=True)
-
-# Seeing if user wants to enter own dataset or use one of the standard datasets provided by sklearn
-dataset_choice = st.selectbox('Choose one option', ['Work with standard dataset', 'Upload own dataset'])
-
-# Different actions taken depending on the dataset the user decides to use
-if (dataset_choice == 'Work with standard dataset'):
+  if (st.button('Submit Dataset')):
+    submission_bar = st.progress(0)
+    for percent_complete in range(100):
+      time.sleep(0.05)
+      submission_bar.progress(percent_complete + 1)
+    
+    X.to_csv('data/features.csv', index=False)
+    y.to_csv('data/target.csv', index=False)
+  
+    st.balloons()
+    st.success(f'{dataset_name} dataset successfully submitted!', icon='✅')
+  
+def standard_dataset_work():
+  '''
+  Creates the layout of the page for if the user decides to use one of the standard sklearn toy datasets.
+  '''
   # Header
   st.header('Choose Standard Dataset')
   st.write(standard_dataset, unsafe_allow_html=True)
@@ -97,12 +107,14 @@ if (dataset_choice == 'Work with standard dataset'):
   # Toy dataset description for the user
   with st.expander('Dataset Description'):
     st.write(description)
-    
+  
   # Submission
-  if (st.button('Submit Dataset')):
-    X.to_csv('data/features.csv')
-    y.to_csv('data/target.csv') 
-else:
+  submission(X, y, dataset_name) 
+  
+def own_dataset_work():
+  '''
+  Creates the layout of the page for if the user wants to upload their own dataset.
+  '''
   # Header
   st.header('Upload Own Dataset')
   st.write(own_dataset, unsafe_allow_html=True)
@@ -117,6 +129,21 @@ else:
     st.dataframe(pd.concat([X, y], axis=1))
     
     # Submission
-    if (st.button('Submit Dataset')):
-      X.to_csv('data/features.csv')
-      y.to_csv('data/target.csv')    
+    dataset_name = file_X.name + ' and ' + file_y.name
+    submission(X, y, dataset_name) 
+  
+#################
+## Application ##
+#################
+
+st.title('Choose Dataset')
+st.write(choose_dataset, unsafe_allow_html=True)
+
+# Seeing if user wants to enter own dataset or use one of the standard datasets provided by sklearn
+dataset_choice = st.selectbox('Choose one option', ['Work with standard dataset', 'Upload own dataset'])
+
+# Different actions taken depending on the dataset the user decides to use
+if (dataset_choice == 'Work with standard dataset'):
+  standard_dataset_work()
+else:
+  own_dataset_work()
