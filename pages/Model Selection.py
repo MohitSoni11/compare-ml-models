@@ -57,6 +57,12 @@ important to consider the following questions based on the
 lack_of_data = '''**IMPORTANT: The uploaded dataset seems to have no more than 50 data points. 
 Due to the severe lack of data, consider collecting more data.**'''
 
+uploading_model = '''
+The files you upload must have the extension ".pkl". This is a specific file format that is used for storing
+python objects including trained machine learning models. Failure to follow this format may result in errors
+or an inability to process the files.
+'''
+
 ######################
 ## Helper Functions ##
 ######################
@@ -133,7 +139,7 @@ def submission(model_names):
 st.title('Model Selection')
 st.write(model_selection, unsafe_allow_html=True)
 
-model_choice = st.selectbox('Choose one', ['Find Models', 'Upload a Model'])
+model_choice = st.selectbox('Choose one', ['Find Models', 'Upload Models'])
 
 if (model_choice == 'Find Models'):
   st.header('Find Models')
@@ -147,7 +153,24 @@ if (model_choice == 'Find Models'):
 
   model_options = st.multiselect('Choose the models you want to later train and evaluate', recommended_models)
   
+  # Submission
   submission(model_options)
 else:
-  st.header('Upload a Model')
-  model = st.file_uploader('Upload a Model')
+  st.header('Upload Models')
+  st.write(uploading_model, unsafe_allow_html=True)
+  model_files = st.file_uploader('Upload Models', accept_multiple_files=True)
+  
+  # Submission
+  if (st.button('Submit Models') and model_files is not None):
+    submission_bar = st.progress(0)
+    for percent_complete in range(100):
+      time.sleep(0.01)
+      submission_bar.progress(percent_complete + 1)
+    
+    for model_file in model_files:
+      model = joblib.load(model_file)
+      model_name = type(model).__name__
+      joblib.dump(model, f'models/{model_name}.pkl')
+      st.success(f'{model_name} successfully submitted!', icon='✅')
+    
+    st.balloons()  
