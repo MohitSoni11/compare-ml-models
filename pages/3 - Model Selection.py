@@ -127,6 +127,10 @@ def submission(model_names):
       time.sleep(2)
       
     placeholder.empty()
+    
+    # Removing currently selected models to add newly selected models
+    for file in os.scandir('models'):
+      os.remove(file.path)
         
     for model in model_names:
       model_name = type(model).__name__
