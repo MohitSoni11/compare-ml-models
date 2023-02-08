@@ -78,16 +78,23 @@ def submission(X, y, dataset_name):
   '''
   
   if (st.button('Submit Dataset')):
-    submission_bar = st.progress(0)
+    placeholder = st.empty()
+    
+    with placeholder.container():    
+      submission_bar = st.progress(0)
+      
     for percent_complete in range(100):
       time.sleep(0.05)
       submission_bar.progress(percent_complete + 1)
     
     X.to_csv('data/features.csv', index=False)
     y.to_csv('data/target.csv', index=False)
+    
+    placeholder.empty()
   
     st.balloons()
     st.success(f'{dataset_name} dataset successfully submitted!', icon='✅')
+    
   
 def standard_dataset_work():
   '''

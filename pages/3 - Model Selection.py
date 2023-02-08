@@ -119,17 +119,21 @@ def submission(model_names):
   Function that submits models and produces aesthetically pleasing displays. 
   '''
   if (st.button('Submit Models')):
-    submission_bar = st.progress(0)
-    for percent_complete in range(100):
-      time.sleep(0.01)
-      submission_bar.progress(percent_complete + 1)
+    placeholder = st.empty()
     
+    with placeholder.container():
+      st.info('Submitting models...')
+      time.sleep(2)
+      
+    placeholder.empty()
+        
     for model in model_names:
       model_name = type(model).__name__
       joblib.dump(model, f'models/{model_name}.pkl')
       st.success(f'{model_name} successfully submitted!', icon='✅')
   
     st.balloons()
+    
     
 
 #################

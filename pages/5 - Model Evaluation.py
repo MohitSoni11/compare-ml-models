@@ -81,11 +81,16 @@ def submission():
   '''
   Function that produces aesthetically pleasing displays when submission occurs. 
   '''
-  submission_bar = st.progress(0)
+  placeholder = st.empty()
+  
+  with placeholder.container():
+    submission_bar = st.progress(0)
+    
   for percent_complete in range(100):
     time.sleep(0.01)
     submission_bar.progress(percent_complete + 1)
   
+  placeholder.empty()
   st.balloons()
 
 #################
