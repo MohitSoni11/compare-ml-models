@@ -88,7 +88,9 @@ def train_all_models(models_list, test_size):
 #################
 
 st.title('Model Training')
-st.write(model_training)
+
+with st.expander('Why is Model Training so important?'):
+  st.write(model_training)
 
 st.header('Test Size')
 with st.expander('Want some help on choosing a test size?'):

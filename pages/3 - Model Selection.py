@@ -141,13 +141,18 @@ def submission(model_names):
 #################
 
 st.title('Model Selection')
-st.write(model_selection, unsafe_allow_html=True)
+
+with st.expander('What is Model Selection?'):
+  st.write(model_selection, unsafe_allow_html=True)
 
 model_choice = st.selectbox('Choose one', ['Find Models', 'Upload Models'])
 
 if (model_choice == 'Find Models'):
   st.header('Find Models')
-  st.write(find_model, unsafe_allow_html=True)
+  
+  with st.expander('Important Instructions'):
+    st.write(find_model, unsafe_allow_html=True)
+  
   recommended_models = recommend_models() 
     
   st.subheader('Recommended Models')
@@ -161,7 +166,10 @@ if (model_choice == 'Find Models'):
   submission(model_options)
 else:
   st.header('Upload Models')
-  st.write(uploading_model, unsafe_allow_html=True)
+  
+  with st.expander('Important Instructions'):
+    st.write(uploading_model, unsafe_allow_html=True)
+  
   model_files = st.file_uploader('Upload Models', accept_multiple_files=True)
   
   # Submission

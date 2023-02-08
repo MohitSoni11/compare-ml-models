@@ -36,7 +36,9 @@ Want to learn more about the sklearn toy datasets? Visit this
 own_dataset = '''
 Please ensure that you upload a **cleaned version of your CSV file** as the program will not perform any additional
 manipulations on your data. It is equally important to **upload the feature and target data separately**, so the
-program can determine what you aim to predict and on which data.
+program can determine what you aim to predict and on which data. Additionally, please note that this program currently 
+**only supports classification and regression use-cases**, so data that is supposed to be used for other purposes may
+cause errors.
 '''
 
 ######################
@@ -102,7 +104,8 @@ def standard_dataset_work():
   '''
   # Header
   st.header('Choose Standard Dataset')
-  st.write(standard_dataset, unsafe_allow_html=True)
+  with st.expander('What are standard datasets?'):
+    st.write(standard_dataset, unsafe_allow_html=True)
   
   # Selecting and showing the dataset
   dataset_name = st.selectbox('', ['Iris', 'Diabetes', 'Wine', 'Breast Cancer'])
@@ -122,7 +125,8 @@ def own_dataset_work():
   '''
   # Header
   st.header('Upload Own Dataset')
-  st.write(own_dataset, unsafe_allow_html=True)
+  with st.expander('Important Instructions'):
+    st.write(own_dataset, unsafe_allow_html=True)
   
   # Giving options to upload the dataset
   file_X = st.file_uploader('Upload a CSV (Only Features)')
@@ -142,7 +146,8 @@ def own_dataset_work():
 #################
 
 st.title('Choose Dataset')
-st.write(choose_dataset, unsafe_allow_html=True)
+with st.expander('What should I consider when choosing a dataset?'):
+  st.write(choose_dataset, unsafe_allow_html=True)
 
 # Seeing if user wants to enter own dataset or use one of the standard datasets provided by sklearn
 dataset_choice = st.selectbox('Choose one option', ['Work with standard dataset', 'Upload own dataset'])

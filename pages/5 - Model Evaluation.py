@@ -98,7 +98,9 @@ def submission():
 #################
 
 st.title('Model Evaluation')
-st.write(model_evaluation)
+
+with st.expander('What happens during model evaluation?'):
+  st.write(model_evaluation)
 
 all_models = get_all_trained_models()
 predictions, X_test, y_test = get_model_predictions(all_models)
