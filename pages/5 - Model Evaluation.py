@@ -7,13 +7,25 @@ import pandas as pd
 import numpy as np
 import os
 import joblib
+import time
 
 # Plotting
 import matplotlib.pyplot as plt
+
 import seaborn as sns
+sns.set_theme(style='whitegrid')  
+
+import altair as alt
 
 # Metrics
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import roc_curve
+from sklearn.metrics import classification_report
+
 
 #########################
 ## Important Variables ##
@@ -49,7 +61,7 @@ def get_all_trained_models():
 def get_model_predictions(trained_models):
   '''
   Retrieves the test data files from the `data_test` directory and returns predictions using the models
-  in `trained_models` and the test target data.
+  in `trained_models`, the test features data, and the test target data.
   '''
   test_features = pd.read_csv('data_test/test_features.csv')
   test_target = pd.read_csv('data_test/test_target.csv')
@@ -58,7 +70,18 @@ def get_model_predictions(trained_models):
   for model in trained_models:
     predictions.append(model.predict(test_features))
   
-  return predictions, test_target
+  return predictions, test_features, test_target
+
+def submission():
+  '''
+  Function that produces aesthetically pleasing displays when submission occurs. 
+  '''
+  submission_bar = st.progress(0)
+  for percent_complete in range(100):
+    time.sleep(0.01)
+    submission_bar.progress(percent_complete + 1)
+  
+  st.balloons()
 
 #################
 ## Application ##
@@ -67,18 +90,79 @@ def get_model_predictions(trained_models):
 st.title('Model Evaluation')
 st.write(model_evaluation)
 
-predictions, y_test = get_model_predictions(get_all_trained_models())
+all_models = get_all_trained_models()
+predictions, X_test, y_test = get_model_predictions(all_models)
 metric_type = st.selectbox('What type of evaluation should be provided?', ['Classification', 'Regression', 'Clustering'])
 
-if (metric_type == 'Classification'):
-  # AUC curve
-  # Classification report
-  # Confusion Matrix
+if (st.button('Submit')):
+  submission()
   
-  ##### Use the altair charts library that is provided by streamlit
-  
-  # Log-loss
-  # Feature importance
-  # Precision-recall curve
-  pass
+  if (metric_type == 'Classification'):
+    all_accuracy = []
+    all_precision = []
+    all_recall = []
+    all_model_name = []
+    
+    for i in range(len(all_models)):
+      model = all_models[i]
+      model_name = type(model).__name__
+      y_pred = predictions[i]
+      
+      accuracy = accuracy_score(y_test, y_pred)
+      precision = precision_score(y_test, y_pred)
+      recall = recall_score(y_test, y_pred)
+      
+      all_accuracy.append(accuracy)
+      all_precision.append(precision)
+      all_recall.append(recall)
+      all_model_name.append(model_name)
+            
+      with st.expander(model_name + ' Evaluation'):
+        st.header(model_name)
+
+        # Important Metrics
+        st.metric('Accuracy', accuracy.round(2))
+        st.metric('Precision', precision.round(2))
+        st.metric('Recall', recall.round(2))
+        
+        # Classification report
+        st.subheader('Classification Report')
+        report = classification_report(y_test, y_pred, output_dict=True)
+        df = pd.DataFrame(report).transpose()
+        st.dataframe(df)
+        
+        # Confusion Matrix
+        st.subheader('Confusion Matrix')
+        fig, ax = plt.subplots()
+        cf_matrix = confusion_matrix(y_test, y_pred)
+        ax = sns.heatmap(cf_matrix, annot=True)
+        st.pyplot(fig)
+        
+        # Precision Recall Curve
+        st.subheader('Precision-Recall Curve')
+        precision, recall, thresholds = precision_recall_curve(y_test, y_pred)
+        fig, ax = plt.subplots()
+        ax.plot(recall, precision, color='purple')
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        st.pyplot(fig)
+        
+        # AUC Curve
+        if (model_name != 'LinearSVC' and model_name != 'SVC'):
+          st.subheader('AUC-ROC Curve')
+          y_pred_proba = model.predict_proba(X_test)[::,1]
+          fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
+          
+          fig, ax = plt.subplots()
+          ax.plot(fpr, tpr, color='purple')
+          plt.ylabel('True Positive Rate')
+          plt.xlabel('False Positive Rate')
+          st.pyplot(fig)
+    
+    st.subheader('Compare Important Metrics')
+    fig_all, ax_all = plt.subplots()     
+    ax_all = sns.barplot(x=all_model_name, y=all_accuracy)
+    st.pyplot(fig_all)
+        
+      
   
