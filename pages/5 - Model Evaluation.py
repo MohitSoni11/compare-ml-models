@@ -17,7 +17,7 @@ sns.set_theme(style='whitegrid')
 
 import altair as alt
 
-# Metrics
+# Classification Metrics
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
@@ -25,6 +25,11 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import roc_curve
 from sklearn.metrics import classification_report
+
+# Regression metrics
+from sklearn.metrics import r2_score
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
 
 
 #########################
@@ -160,9 +165,73 @@ if (st.button('Submit')):
           st.pyplot(fig)
     
     st.subheader('Compare Important Metrics')
+    
     fig_all, ax_all = plt.subplots()     
     ax_all = sns.barplot(x=all_model_name, y=all_accuracy)
+    plt.title('Accuracy')
     st.pyplot(fig_all)
-        
+    
+    fig_all, ax_all = plt.subplots()     
+    ax_all = sns.barplot(x=all_model_name, y=all_precision)
+    plt.title('Precision')
+    st.pyplot(fig_all)
+    
+    fig_all, ax_all = plt.subplots()     
+    ax_all = sns.barplot(x=all_model_name, y=all_recall)
+    plt.title('Recall')
+    st.pyplot(fig_all)
+    
+  elif (metric_type == 'Regression'):
+    all_r2 = []
+    all_mse = []
+    all_mae = []
+    all_model_name = []
+    
+    for i in range(len(all_models)):
+      model = all_models[i]
+      model_name = type(model).__name__
+      y_pred = predictions[i]
       
+      r2 = r2_score(y_test, y_pred)
+      mse = mean_squared_error(y_test, y_pred)
+      mae = mean_absolute_error(y_test, y_pred)
+      
+      all_r2.append(r2)
+      all_mse.append(mse)
+      all_mae.append(mae)
+      all_model_name.append(model_name)
+            
+      with st.expander(model_name + ' Evaluation'):
+        st.header(model_name)
+
+        # Important Metrics
+        st.metric('R^2 Score', r2.round(2))
+        st.metric('MSE (Mean Squared Error)', mse.round(2))
+        st.metric('MAE (Mean Absolute Error)', mae.round(2))
+        
+        # Showing the Regression curve
+        st.subheader('Regression Results on Test Data')
+        
+        fig, ax = plt.subplots()
+        ax.plot(np.arange(len(y_test)), y_test, color='purple', label='Target')
+        ax.plot(np.arange(len(y_pred)), y_pred, color='skyblue', label='Predictions')
+        plt.xlabel('Datapoint')
+        plt.legend()
+        st.pyplot(fig)
+    
+    st.subheader('Compare Important Metrics')
+    fig_all, ax_all = plt.subplots()     
+    ax_all = sns.barplot(x=all_model_name, y=all_r2)
+    plt.title('R^2 Score')
+    st.pyplot(fig_all)
+    
+    fig_all, ax_all = plt.subplots()     
+    ax_all = sns.barplot(x=all_model_name, y=all_mse)
+    plt.title('MSE (Mean Squared Error)')
+    st.pyplot(fig_all)
+    
+    fig_all, ax_all = plt.subplots()     
+    ax_all = sns.barplot(x=all_model_name, y=all_mae)
+    plt.title('MAE (Mean Absolute Error)')
+    st.pyplot(fig_all)
   
