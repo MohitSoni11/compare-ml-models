@@ -108,14 +108,21 @@ if (st.button('Submit')):
     all_recall = []
     all_model_name = []
     
+    binary_classification = len(np.unique(y_test)) <= 2
+    
     for i in range(len(all_models)):
       model = all_models[i]
       model_name = type(model).__name__
       y_pred = predictions[i]
       
       accuracy = accuracy_score(y_test, y_pred)
-      precision = precision_score(y_test, y_pred)
-      recall = recall_score(y_test, y_pred)
+      
+      if (not binary_classification):
+        precision = precision_score(y_test, y_pred, average='micro')
+        recall = recall_score(y_test, y_pred, average='micro')
+      else:
+        precision = precision_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
       
       all_accuracy.append(accuracy)
       all_precision.append(precision)
@@ -143,26 +150,28 @@ if (st.button('Submit')):
         ax = sns.heatmap(cf_matrix, annot=True)
         st.pyplot(fig)
         
-        # Precision Recall Curve
-        st.subheader('Precision-Recall Curve')
-        precision, recall, thresholds = precision_recall_curve(y_test, y_pred)
-        fig, ax = plt.subplots()
-        ax.plot(recall, precision, color='purple')
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
-        st.pyplot(fig)
-        
-        # AUC Curve
-        if (model_name != 'LinearSVC' and model_name != 'SVC'):
-          st.subheader('AUC-ROC Curve')
-          y_pred_proba = model.predict_proba(X_test)[::,1]
-          fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
-          
+        # Only draw precision-recall curve and AUC-ROC curve if you have binary classification
+        if (binary_classification):
+          # Precision Recall Curve
+          st.subheader('Precision-Recall Curve')
+          precisions, recalls, thresholds = precision_recall_curve(y_test, y_pred)
           fig, ax = plt.subplots()
-          ax.plot(fpr, tpr, color='purple')
-          plt.ylabel('True Positive Rate')
-          plt.xlabel('False Positive Rate')
+          ax.plot(recalls, precisions, color='purple')
+          plt.xlabel('Recall')
+          plt.ylabel('Precision')
           st.pyplot(fig)
+        
+          # AUC Curve
+          if (model_name != 'LinearSVC' and model_name != 'SVC'):
+            st.subheader('AUC-ROC Curve')
+            y_pred_proba = model.predict_proba(X_test)[::,1]
+            fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
+            
+            fig, ax = plt.subplots()
+            ax.plot(fpr, tpr, color='purple')
+            plt.ylabel('True Positive Rate')
+            plt.xlabel('False Positive Rate')
+            st.pyplot(fig)
     
     st.subheader('Compare Important Metrics')
     
