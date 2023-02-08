@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import time
+import os
 import joblib
 
 # Regression Models
@@ -144,6 +145,10 @@ st.title('Model Selection')
 
 with st.expander('What is Model Selection?'):
   st.write(model_selection, unsafe_allow_html=True)
+  
+if (len(os.listdir('data')) == 0):
+  st.error('Dataset not yet selected!', icon='🚨')
+  st.stop()
 
 model_choice = st.selectbox('Choose one', ['Find Models', 'Upload Models'])
 

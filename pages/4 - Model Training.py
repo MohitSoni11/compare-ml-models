@@ -92,6 +92,10 @@ st.title('Model Training')
 with st.expander('Why is Model Training so important?'):
   st.write(model_training)
 
+if (len(os.listdir('models')) == 0):
+  st.error('Models not yet selected!', icon='🚨')
+  st.stop()
+
 st.header('Test Size')
 with st.expander('Want some help on choosing a test size?'):
   st.write(test_size_text)

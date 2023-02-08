@@ -101,6 +101,10 @@ st.title('Model Evaluation')
 
 with st.expander('What happens during model evaluation?'):
   st.write(model_evaluation)
+  
+if (len(os.listdir('models_trained')) == 0):
+  st.error('Models not yet trained!', icon='🚨')
+  st.stop()
 
 all_models = get_all_trained_models()
 predictions, X_test, y_test = get_model_predictions(all_models)
