@@ -97,7 +97,7 @@ st.write(model_evaluation)
 
 all_models = get_all_trained_models()
 predictions, X_test, y_test = get_model_predictions(all_models)
-metric_type = st.selectbox('What type of evaluation should be provided?', ['Classification', 'Regression', 'Clustering'])
+metric_type = st.selectbox('What type of evaluation should be provided?', ['Regression', 'Classification'])
 
 if (st.button('Submit')):
   submission()

@@ -52,8 +52,6 @@ def store_standard_dataset(dataset_name):
     dataset = datasets.load_iris()
   elif (dataset_name == 'Diabetes'):
     dataset = datasets.load_diabetes()
-  elif (dataset_name == 'Digits'):
-    dataset = datasets.load_digits()
   elif (dataset_name == 'Wine'):
     dataset = datasets.load_wine()
   else:
@@ -100,7 +98,7 @@ def standard_dataset_work():
   st.write(standard_dataset, unsafe_allow_html=True)
   
   # Selecting and showing the dataset
-  dataset_name = st.selectbox('', ['Iris', 'Diabetes', 'Digits', 'Wine', 'Breast Cancer'])
+  dataset_name = st.selectbox('', ['Iris', 'Diabetes', 'Wine', 'Breast Cancer'])
   X, y, description = store_standard_dataset(dataset_name)
   st.dataframe(pd.concat([X, y], axis=1))
   
