@@ -190,7 +190,8 @@ if (st.button('Submit')):
     ax_all = sns.barplot(x=all_model_name, y=all_accuracy)
     plt.title('Accuracy')
     plt.ylim(0, 1.0)
-    st.pyplot(fig_all)
+    st.pyplot(fig_all)  
+    
     
     fig_all, ax_all = plt.subplots()     
     ax_all = sns.barplot(x=all_model_name, y=all_precision)
