@@ -60,7 +60,8 @@ def get_all_trained_models():
   
   trained_models = []
   for file in file_list:
-    trained_models.append(joblib.load('models_trained/' + file))
+    if (not file == 'placeholder.txt'):
+      trained_models.append(joblib.load('models_trained/' + file))
   return trained_models
 
 def get_model_predictions(trained_models):
@@ -102,7 +103,7 @@ st.title('Model Evaluation')
 with st.expander('What happens during model evaluation?'):
   st.write(model_evaluation)
   
-if (len(os.listdir('models_trained')) == 0):
+if (len(os.listdir('models_trained')) <= 1):
   st.error('Models not yet trained!', icon='🚨')
   st.stop()
 

@@ -25,7 +25,8 @@ choosing models.
 
 def remove_dir_files(dir_path):
   for file in os.scandir(dir_path):
-    os.remove(file.path)
+    if (not file.name == 'placeholder.txt'):
+      os.remove(file.path)
 
 #################
 ## Application ##

@@ -130,7 +130,8 @@ def submission(model_names):
     
     # Removing currently selected models to add newly selected models
     for file in os.scandir('models'):
-      os.remove(file.path)
+      if (not file.name == 'placeholder.txt'):
+        os.remove(file.path)
         
     for model in model_names:
       model_name = type(model).__name__
@@ -150,7 +151,7 @@ st.title('Model Selection')
 with st.expander('What is Model Selection?'):
   st.write(model_selection, unsafe_allow_html=True)
   
-if (len(os.listdir('data')) == 0):
+if (len(os.listdir('data')) <= 1):
   st.error('Dataset not yet selected!', icon='🚨')
   st.stop()
 

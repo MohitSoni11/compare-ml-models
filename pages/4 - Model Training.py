@@ -46,7 +46,8 @@ def get_all_models():
   
   models_list = []
   for file in file_list:
-    models_list.append(joblib.load('models/' + file))
+    if (not file == 'placeholder.txt'):
+      models_list.append(joblib.load('models/' + file))
   return models_list
 
 def train_all_models(models_list, test_size):
@@ -92,7 +93,7 @@ st.title('Model Training')
 with st.expander('Why is Model Training so important?'):
   st.write(model_training)
 
-if (len(os.listdir('models')) == 0):
+if (len(os.listdir('models')) <= 1):
   st.error('Models not yet selected!', icon='🚨')
   st.stop()
 
