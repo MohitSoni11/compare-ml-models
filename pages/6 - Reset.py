@@ -42,3 +42,5 @@ if (confirm_reset == 'Reset'):
   remove_dir_files('data_test')
   remove_dir_files('models')
   remove_dir_files('models_trained')
+  st.success('Reset Successful!', icon='✅')
+  st.balloons()
