@@ -167,7 +167,7 @@ if (model_choice == 'Find Models'):
   st.subheader('Recommended Models')
   for model in recommended_models:
     model_name = type(model).__name__
-    st.button(model_name)
+    st.code(model_name)
 
   model_options = st.multiselect('Choose the models you want to later train and evaluate', recommended_models)
   
